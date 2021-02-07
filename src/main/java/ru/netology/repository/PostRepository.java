@@ -1,6 +1,8 @@
 package ru.netology.repository;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.stereotype.Repository;
+import ru.netology.exception.NotFoundException;
 import ru.netology.model.Post;
 
 import java.util.List;
@@ -18,7 +20,9 @@ public class PostRepository {
 
     public List<Post> all() {
         for (Post post : listPost) {
-            System.out.println("ID: " + post.getId() + ", CurrentContent:" + post.getContent());
+            if (!post.isRemoved()) {
+                System.out.println("ID: " + post.getId() + ", CurrentContent:" + post.getContent());
+            }
         }
         return listPost;
     }
@@ -28,7 +32,11 @@ public class PostRepository {
         Post postCurrent = null;
         for (Post post : listPost) {
             if (post.getId() == id) {
-                postCurrent = post;
+                if (post.isRemoved()) {
+                    throw new NotFoundException("Пост удалён!");
+                } else {
+                    postCurrent = post;
+                }
             } else {
                 System.out.println("Нет такого ID!");
             }
@@ -40,10 +48,15 @@ public class PostRepository {
         if (post.getId() == 0) {
             ID.getAndIncrement();
             post.setId(ID.get());
+
         } else {
             for (Post currentPost : listPost) {
                 if (currentPost.getId() == post.getId()) {
-                    currentPost.setContent(post.getContent());
+                    if (post.isRemoved()) {
+                        throw new NotFoundException();
+                    } else {
+                        currentPost.setContent(post.getContent());
+                    }
                 } else {
                     ID.getAndIncrement();
                     System.out.println("Постов с таким ID не существует, новый ID: " + ID.get());
@@ -51,6 +64,7 @@ public class PostRepository {
                 }
             }
         }
+        post.setRemoved(false);
         listPost.add(post);
         return post;
     }
@@ -58,7 +72,8 @@ public class PostRepository {
     public void removeById(long id) {
         for (Post post : listPost) {
             if (post.getId() == id) {
-                listPost.remove(post);
+                post.setRemoved(true);
+//                listPost.remove(post); // пост пока не удаляем
             } else {
                 System.out.println("Нет такого ID!");
             }
