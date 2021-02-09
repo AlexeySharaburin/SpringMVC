@@ -1,7 +1,9 @@
 package ru.netology.repository;
 
 import org.apache.catalina.connector.Response;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.netology.exception.NotFoundException;
 import ru.netology.model.Post;
 
@@ -26,7 +28,6 @@ public class PostRepository {
         }
         return listPost;
     }
-
 
     public Optional<Post> getById(long id) {
         Post postCurrent = null;
