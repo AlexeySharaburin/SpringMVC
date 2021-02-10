@@ -25,8 +25,13 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<List<Post>> all() {
-        return new ResponseEntity<>(service.all(), HttpStatus.OK);
+        final List<Post> deletedPosts = service.allDeleted();
+        final List<Post> unDeletedPosts = service.all();
+        return deletedPosts != null && !deletedPosts.isEmpty()
+                ? new ResponseEntity<>(unDeletedPosts, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
 
 //    @GetMapping("{/id")
 //    public Post getById(@PathVariable long id) {
@@ -35,8 +40,12 @@ public class PostController {
 
     @GetMapping("{/id")
     public ResponseEntity<Post> getById(@PathVariable long id) {
-        return new ResponseEntity<>(service.getById(id), HttpStatus.OK);
+        Post currentPost = service.getById(id);
+        return currentPost != null
+                ? new ResponseEntity<>(currentPost, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
 
 //    @PostMapping
 //    public Post save(@RequestBody Post post) {

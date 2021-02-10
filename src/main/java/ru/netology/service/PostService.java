@@ -11,46 +11,55 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class PostService {
+
     private final PostRepository repository;
+    private final List<Post> unDeletedPosts = new CopyOnWriteArrayList<>();
+    private final List<Post> deletedPosts = new CopyOnWriteArrayList<>();
 
     public PostService(PostRepository repository) {
         this.repository = repository;
     }
 
-//        public List<Post> all() {
+//    public List<Post> all() {
 //        return repository.all();
 //    }
 
-    public ResponseEntity<List<Post>> all() {
-        List<Post> unDeletePosts = new CopyOnWriteArrayList<>();
+    public List<Post> all() {
         for (Post post : repository.all()
         ) {
             if (!post.isRemoved()) {
-                unDeletePosts.add(post);
-            } else {
-                return ResponseEntity.notFound().build();
+                unDeletedPosts.add(post);
             }
         }
-        return new ResponseEntity<>(unDeletePosts);
+        return unDeletedPosts;
+    }
+
+    public List<Post> allDeleted() {
+        for (Post post : repository.all()
+        ) {
+            if (post.isRemoved()) {
+                deletedPosts.add(post);
+            }
+        }
+        return deletedPosts;
     }
 
 //    public Post getById(long id) {
 //        return repository.getById(id).orElseThrow(NotFoundException::new);
 //    }
 
-    public ResponseEntity<Post> getById(long id) {
+    public Post getById(long id) {
         Post postCurrent = null;
         for (Post post : repository.all()) {
             if (post.getId() == id) {
-                if (post.isRemoved()) {
-                    return ResponseEntity.notFound().build();
-                } else {
+                if (!post.isRemoved()) {
                     postCurrent = post;
                 }
             } else {
                 System.out.println("Нет такого ID!");
             }
-        } return new ResponseEntity<>(postCurrent);
+        }
+        return postCurrent;
     }
 
 
