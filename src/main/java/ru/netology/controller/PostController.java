@@ -24,12 +24,8 @@ public class PostController {
 //    }
 
     @GetMapping
-    public ResponseEntity<List<Post>> all(@RequestBody Post post) {
-        final List<Post> posts = service.all();
-        if (post.isRemoved()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(posts, HttpStatus.OK);
+    public ResponseEntity<List<Post>> all() {
+        return new ResponseEntity<>(service.all(), HttpStatus.OK);
     }
 
 //    @GetMapping("{/id")
@@ -38,12 +34,8 @@ public class PostController {
 //    }
 
     @GetMapping("{/id")
-    public ResponseEntity<Post> getById(@PathVariable long id, @RequestBody Post post) {
-        final Post currentPost = service.getById(id);
-        if (post.isRemoved()) {
-            return ResponseEntity.notFound().build();
-        }
-        return new ResponseEntity<>(currentPost, HttpStatus.OK);
+    public ResponseEntity<Post> getById(@PathVariable long id) {
+        return new ResponseEntity<>(service.getById(id), HttpStatus.OK);
     }
 
 //    @PostMapping
