@@ -25,9 +25,8 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<List<Post>> all() {
-        final List<Post> deletedPosts = service.allDeleted();
         final List<Post> unDeletedPosts = service.all();
-        return deletedPosts != null && !deletedPosts.isEmpty()
+        return unDeletedPosts != null && !unDeletedPosts.isEmpty()
                 ? new ResponseEntity<>(unDeletedPosts, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -54,11 +53,10 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<Post> save(@RequestBody Post post) {
-        final Post currentPost = service.save(post);
         if (post.isRemoved()) {
             return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(currentPost, HttpStatus.OK);
+        return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
 

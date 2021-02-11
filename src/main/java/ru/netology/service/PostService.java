@@ -14,7 +14,6 @@ public class PostService {
 
     private final PostRepository repository;
     private final List<Post> unDeletedPosts = new CopyOnWriteArrayList<>();
-    private final List<Post> deletedPosts = new CopyOnWriteArrayList<>();
 
     public PostService(PostRepository repository) {
         this.repository = repository;
@@ -34,15 +33,6 @@ public class PostService {
         return unDeletedPosts;
     }
 
-    public List<Post> allDeleted() {
-        for (Post post : repository.all()
-        ) {
-            if (post.isRemoved()) {
-                deletedPosts.add(post);
-            }
-        }
-        return deletedPosts;
-    }
 
 //    public Post getById(long id) {
 //        return repository.getById(id).orElseThrow(NotFoundException::new);
